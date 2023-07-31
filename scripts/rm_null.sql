@@ -1,0 +1,1 @@
+DELETE FROM students WHERE id IS NULL OR trim(id) = '';
