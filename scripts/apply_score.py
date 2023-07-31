@@ -2,7 +2,7 @@ import sqlite3
 import re
 import threading
 
-start = 51000002
+start = 51000001
 end = 51019942
 thread_count = 5
 def chunks(xs, n):
@@ -86,14 +86,11 @@ def apply_between(start: int, end: int, thread_count: int = 10):
         temp = default_dict.copy()
         temp.update(result)
         result = temp
-        print(result)
         for subject, score in result.items():
-            print(subject)
-            cur.execute(sql_set_score(id, to_ascii[subject], None))
-        # con.commit()
+            if score is None:
+                score = "NULL"
+            cur.execute(sql_set_score(id, to_ascii[subject], score))
         print(id)
-        break
-
 
 def sql_set_score(id, subject, score):
     return """
@@ -103,14 +100,16 @@ def sql_set_score(id, subject, score):
         id={}
     """.format(subject, score, id)
 
-threads = []
-for split in efficient_task_split(start, end, thread_count):
-    thread = threading.Thread(target=apply_between, args=(split[0], split[1], thread_count))
-    threads.append(thread)
-    thread.start()
+apply_between(start, end, thread_count)
+# threads = []
+# for split in efficient_task_split(start, end, thread_count):
+    # thread = threading.Thread(target=apply_between, args=(split[0], split[1], thread_count))
+    # apply_between(split[0], split[1], thread_count)
+    # threads.append(thread)
+    # thread.start()
 
-# execute threads
-for i, thread in enumerate(threads):
-    thread.join()
-    print(f"thread[{i}] finished")
+# execute threads1
+# for i, thread in enumerate(threads):
+#     thread.join()
+#     print(f"thread[{i}] finished")
 con.commit()
