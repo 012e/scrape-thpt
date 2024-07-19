@@ -21,9 +21,3 @@ SET b00 = CASE
            WHEN toan IS NOT NULL AND sinh IS NOT NULL AND hoa IS NOT NULL THEN toan + sinh + hoa
            ELSE NULL
          END;
-
-UPDATE students
-SET b01 = CASE 
-           WHEN toan IS NOT NULL AND sinh IS NOT NULL AND su IS NOT NULL THEN toan + sinh + su
-           ELSE NULL
-         END;
