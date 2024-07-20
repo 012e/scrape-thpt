@@ -1,10 +1,13 @@
 package scraper
 
 import (
+	"fmt"
+	"net/http"
 	"sync"
 
 	"github.com/012e/scrape-thptscore/models"
 	"github.com/012e/scrape-thptscore/scrapesources/ag"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -19,7 +22,11 @@ type Config struct {
 }
 
 type ScrapSource interface {
-	Scrape(sbd int, tries int) (*models.Student, error)
+	// GetRequest returns a request to the intended scrape source
+	GetRequest(sbd int) (*http.Request, error)
+
+	// ParseResponse parses the response after getting the response from the requested source
+	ParseResponse(resp *http.Response) (*models.Student, error)
 }
 
 type ErrWithID struct {
@@ -28,18 +35,22 @@ type ErrWithID struct {
 }
 
 type Scraper struct {
-	inputChan chan int
-	config    Config
-	errs      []ErrWithID
-	errMutex  sync.Mutex
-	wg        sync.WaitGroup
+	inputChan  chan int
+	config     Config
+	errs       []ErrWithID
+	errMutex   sync.Mutex
+	wg         sync.WaitGroup
+	httpClient *http.Client
 }
 
 func NewScraper(config Config) *Scraper {
 	if config.Source == nil {
 		config.Source = ag.Scraper{}
 	}
-	return &Scraper{config: config}
+	retryhttp := retryablehttp.NewClient()
+	retryhttp.RetryMax = config.Retries
+	client := retryhttp.StandardClient()
+	return &Scraper{config: config, httpClient: client}
 }
 
 func (s *Scraper) reportError(id int, err error) {
@@ -53,7 +64,7 @@ func (s *Scraper) Run() {
 	s.inputChan = make(chan int)
 	for i := 0; i < s.config.ConcurrentConnection; i += 1 {
 		s.wg.Add(1)
-		go s.Scrape()
+		go s.scrape()
 	}
 	logrus.Debug("finished spawning goroutines")
 	for i := s.config.StartIndex; i <= s.config.EndIndex; i += 1 {
@@ -63,12 +74,34 @@ func (s *Scraper) Run() {
 	logrus.Debug("closing input channel")
 	close(s.inputChan)
 	s.wg.Wait()
+	logrus.Debug("finished scraping")
 }
 
-func (s *Scraper) Scrape() {
+func (s *Scraper) getBySbd(sbd int) (*models.Student, error) {
+	logrus.Debugf("getting student request for %d", sbd)
+	req, err := s.config.Source.GetRequest(sbd)
+	if err != nil {
+		return nil, fmt.Errorf("error getting student from scraper: %v", err)
+	}
+
+	logrus.Debugf("executing request for %d", sbd)
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't request student: %v", err)
+	}
+
+	logrus.Debugf("parsing request for %d", sbd)
+	student, err := s.config.Source.ParseResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't parse student: %v", err)
+	}
+	return student, nil
+}
+
+func (s *Scraper) scrape() {
 	for sbd := range s.inputChan {
 		logrus.Debugf("Scraping student id %d", sbd)
-		student, err := s.config.Source.Scrape(sbd, s.config.Retries)
+		student, err := s.getBySbd(sbd)
 		if err != nil {
 			logrus.Debugf("failed to get student %d: %v", sbd, err)
 			s.reportError(sbd, err)
@@ -80,6 +113,6 @@ func (s *Scraper) Scrape() {
 	s.wg.Done()
 }
 
-func (s *Scraper) GetErrors() []ErrWithID {
+func (s Scraper) GetErrors() []ErrWithID {
 	return s.errs
 }

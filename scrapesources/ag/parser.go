@@ -70,7 +70,7 @@ func parseScore(s string) score {
 	scores[khxh] = nil
 	scores[khtn] = nil
 
-	r := regexp.MustCompile(`(Toán|Ngữ văn|Lịch sử|Địa lí|Vật lí|Lịch sử|Hóa học|Sinh học|Tiếng Anh|Tiếng Trung|Tiếng Nhật|Tiếng Pháp|KHTN|KHXH|GDCD):\s*(\d+\.\d+)`)
+	r := regexp.MustCompile(`(Toán|Ngữ văn|Địa lí|Vật lí|Lịch sử|Hóa học|Sinh học|Tiếng Anh|Tiếng Trung|Tiếng Nhật|Tiếng Pháp|KHTN|KHXH|GDCD):\s*(\d+\.\d+)`)
 	result := r.FindAllStringSubmatch(s, -1)
 	for _, match := range result {
 
@@ -126,7 +126,7 @@ func (r rawResponse) toStudent() (*models.Student, error) {
 	}, nil
 }
 
-func ParseTableFromHtmlByte(b []byte) (*models.Student, error) {
+func parseTableFromHtmlByte(b []byte) (*models.Student, error) {
 	response, err := htmltable.NewSliceFromString[rawResponse](string(b))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse html from %s: %v", string(b), err)
@@ -134,7 +134,7 @@ func ParseTableFromHtmlByte(b []byte) (*models.Student, error) {
 	return response[0].toStudent()
 }
 
-func TableFromResponse(r *http.Response) (*models.Student, error) {
+func (_ Scraper) ParseResponse(r *http.Response) (*models.Student, error) {
 	response, err := htmltable.NewSliceFromResponse[rawResponse](r)
 	if err != nil {
 		return nil, err
