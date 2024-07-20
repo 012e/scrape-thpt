@@ -6,7 +6,7 @@ import (
 
 	"github.com/012e/scrape-thptscore/models"
 	"github.com/012e/scrape-thptscore/scraper"
-	"github.com/012e/scrape-thptscore/scrapesources/vietnamnet"
+	"github.com/012e/scrape-thptscore/scrapesources/baoag"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,7 +25,7 @@ func init() {
 	log.SetLevel(log.DebugLevel)
 	flag.IntVar(&ConcurrentConnection, "con", 1, "Number of concurrent connections")
 	flag.IntVar(&StartIndex, "start", 0, "Start index")
-	flag.IntVar(&EndIndex, "end", 0, "End index")
+	flag.IntVar(&EndIndex, "end", 0, "End index, default value is start index")
 	flag.IntVar(&Retries, "try", 3, "Total tries until give up scraping an id")
 	flag.Parse()
 	if StartIndex <= 0 {
@@ -66,7 +66,7 @@ func main() {
 		EndIndex:             EndIndex,
 		Retries:              Retries,
 		DB:                   db,
-		Source:               vietnamnet.Scraper{},
+		Source:               baoag.Scraper{},
 	})
 	scraper.Run()
 	errs := scraper.GetErrors()
