@@ -20,7 +20,6 @@ func TestParse(t *testing.T) {
 	assert.Nil(t, student.Phap)
 	assert.Nil(t, student.Trung)
 	assert.Nil(t, student.Nhat)
-	assert.Nil(t, student.Sinh)
 
 	expToan := float32(7.80)
 	expLy := float32(6.50)

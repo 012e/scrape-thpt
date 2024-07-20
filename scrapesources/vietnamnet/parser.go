@@ -21,8 +21,6 @@ func okOrNil(m map[string]float32, key string) *float32 {
 	return nil
 }
 
-var renamer = map[string]string{}
-
 func tableToMap(table []htmlTable) map[string]float32 {
 	var m = make(map[string]float32)
 	for _, v := range table {
@@ -35,7 +33,7 @@ func tableToMap(table []htmlTable) map[string]float32 {
 	return m
 }
 
-func parseTableFromResponse(res *http.Response) (*models.Student, error) {
+func (s Scraper) ParseResponse(res *http.Response) (*models.Student, error) {
 	table, err := htmltable.NewSliceFromResponse[htmlTable](res)
 	if err != nil {
 		return nil, err

@@ -64,7 +64,7 @@ func TestParseKHTN(t *testing.T) {
 }
 
 func TestParseHTMLTable(t *testing.T) {
-	parsed, err := ParseTableFromHtmlByte([]byte(exampleHTML))
+	parsed, err := parseTableFromHtmlByte([]byte(exampleHTML))
 	assert.NoError(t, err)
 	assert.NotNil(t, parsed)
 

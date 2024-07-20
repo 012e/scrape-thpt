@@ -39,38 +39,27 @@ func floatStringOrNil(s string) *float32 {
 	return &res32
 }
 
-// func tableToMap(table []htmlTable) map[string]float32 {
-// 	var m = make(map[string]float32)
-// 	for _, v := range table {
-// 		parsed, err := strconv.ParseFloat(v.Score, 32)
-// 		if err != nil {
-// 			panic(fmt.Sprintf("failed to parse float score: %v", err))
-// 		}
-// 		m[v.Subject] = float32(parsed)
-// 	}
-// 	return m
-// }
-
 func convSrcToDst(src htmlTable) *models.Student {
 	return &models.Student{
-		SBD:    src.SBD,
-		Name:   src.Name,
-		Gender: src.Gender,
-		Toan:   floatStringOrNil(src.Toan),
-		Van:    floatStringOrNil(src.Van),
-		Ly:     floatStringOrNil(src.Ly),
-		Hoa:    floatStringOrNil(src.Hoa),
-		Sinh:   floatStringOrNil(src.Sinh),
-		Su:     floatStringOrNil(src.Su),
-		Dia:    floatStringOrNil(src.Dia),
-		Anh:    floatStringOrNil(src.Anh),
-		GDCD:   floatStringOrNil(src.GDCD),
-		KHTN:   floatStringOrNil(src.KHTN),
-		KHXH:   floatStringOrNil(src.KHXH),
+		SBD:      src.SBD,
+		Name:     src.Name,
+		Gender:   src.Gender,
+		Birthday: src.Birthday,
+		Toan:     floatStringOrNil(src.Toan),
+		Van:      floatStringOrNil(src.Van),
+		Ly:       floatStringOrNil(src.Ly),
+		Hoa:      floatStringOrNil(src.Hoa),
+		Sinh:     floatStringOrNil(src.Sinh),
+		Su:       floatStringOrNil(src.Su),
+		Dia:      floatStringOrNil(src.Dia),
+		Anh:      floatStringOrNil(src.Anh),
+		GDCD:     floatStringOrNil(src.GDCD),
+		KHTN:     floatStringOrNil(src.KHTN),
+		KHXH:     floatStringOrNil(src.KHXH),
 	}
 }
 
-func parseTableFromResponse(res *http.Response) (*models.Student, error) {
+func (_ Scraper) ParseResponse(res *http.Response) (*models.Student, error) {
 	table, err := htmltable.NewSliceFromResponse[htmlTable](res)
 	if err != nil {
 		return nil, err

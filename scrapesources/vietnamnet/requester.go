@@ -3,28 +3,12 @@ package vietnamnet
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/012e/scrape-thptscore/models"
-	"github.com/hashicorp/go-retryablehttp"
 )
 
 type Scraper struct{}
 
-func getResponse(sbd int, retries int) (*http.Response, error) {
-	client := retryablehttp.NewClient()
-	client.RetryMax = retries
-	return client.Get(fmt.Sprintf("https://vietnamnet.vn/giao-duc/diem-thi/tra-cuu-diem-thi-tot-nghiep-thpt/2024/%d.html", sbd))
-}
-
-func (s Scraper) Scrape(sdb int, retries int) (*models.Student, error) {
-	resp, err := getResponse(sdb, retries)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get response from id %d: %e", sdb, err)
-	}
-	student, err := parseTableFromResponse(resp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse response from id %d: %e", sdb, err)
-	}
-	student.SBD = sdb
-	return student, nil
+func (s Scraper) GetRequest(sbd int) (*http.Request, error) {
+	return http.NewRequest(http.MethodGet,
+		fmt.Sprintf("https://vietnamnet.vn/giao-duc/diem-thi/tra-cuu-diem-thi-tot-nghiep-thpt/2024/%d.html", sbd),
+		nil)
 }
