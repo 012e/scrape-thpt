@@ -6,7 +6,7 @@ Scrape scores from Vietnam's national high school exam with any source of choice
 
 ### As a library
 
-Simply runs
+Simply run:
 
 ```sh
 go get github.com/012e/scrape-thpt
@@ -23,7 +23,7 @@ go install github.com/012e/scrape-thpt@latest
 ### As a binary
 
 By default, scrapes score from [Báo An Giang](https://baoangiang.com.vn/tra-cuu-diem-thi-thpt.html)
-and saves to `students` table.
+and saves them to `students` table.
 Basic usage:
 ```txt
 $ scrape-thpt -help
@@ -42,7 +42,7 @@ $ scrape-thpt -help
 
 #### `scrapesource` interface
 
-All the scrapings are mainly based on `ScrapeSource` interface:
+All the scraping is mainly based on `ScrapeSource` interface:
 ```go
 type ScrapSource interface {
     // GetRequest returns a request to the intended scrape source
@@ -60,7 +60,7 @@ scrape sources from [baoangiang.com.vn](https://baoangiang.com.vn/tra-cuu-diem-t
 
 #### Scraping
 
-1. To begins, create a new `Scraper`:
+1. To begin, create a new `Scraper`:
 ```go
 db := createGormDB()
 scraper := scraper.NewScraper(scraper.Config{
@@ -74,7 +74,7 @@ scraper := scraper.NewScraper(scraper.Config{
 ```
 Currently, gorm is the only supported orm.
 
-2. Starts scraping and handle errors (slice of structs contain error and candidate number):
+2. Start scraping and handle errors (slice of structs contain error and candidate number):
 ```go
 scraper.Run()
 errors := scraper.GetErrors()
