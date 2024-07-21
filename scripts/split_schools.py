@@ -1,3 +1,11 @@
+"""
+Search where new batches start based on students' name.
+We also have to manually check for some names because there
+is a small amount of inconsistencies in the database (I don't even know how).
+
+First argument: start id
+Second argument: end id
+"""
 import sqlite3
 import sys
 

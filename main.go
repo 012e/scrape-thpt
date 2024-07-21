@@ -23,7 +23,7 @@ func init() {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
-	flag.IntVar(&ConcurrentConnection, "con", 1, "Number of concurrent connections")
+	flag.IntVar(&ConcurrentConnection, "con", 3, "Number of concurrent connections.\nTweaks this number to scrape faster.")
 	flag.IntVar(&StartIndex, "start", 0, "Start index")
 	flag.IntVar(&EndIndex, "end", 0, "End index, default value is start index")
 	flag.IntVar(&Retries, "try", 3, "Total tries until give up scraping an id")

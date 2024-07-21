@@ -1,3 +1,8 @@
+"""
+Check for missing students' id
+First argument: start id
+Second argument: end id
+"""
 import sqlite3
 import sys
 
