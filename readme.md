@@ -35,7 +35,7 @@ $ scrape-thpt -help
   -start int
         Start index
   -try int
-        Total tries until give up scraping a candidate number (default 3)```
+        Total tries until give up scraping a candidate number (default 3)
 ```
 
 ### As a library
