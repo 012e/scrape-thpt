@@ -1,6 +1,7 @@
 # Scrape THPTQG score
 
 Scrape scores from Vietnam's national high school exam with any source of choice.
+![image](https://github.com/user-attachments/assets/f0833c79-d1fa-4e06-a255-1e2da9c5b68c)
 
 ## Installation
 
